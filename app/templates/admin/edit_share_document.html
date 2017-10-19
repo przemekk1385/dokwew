@@ -1,0 +1,25 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}
+    {% if edit_document %}Edytuj dokument{% endif %}
+    {% if share_document %}Udostępnij dokument{% endif %}
+{% endblock %}
+{% block body %}
+<main>
+    <a class="badge badge-dark mb-3" href="{{ url_for('admin.manage_documents') }}" title="Zamknij">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        zamknij
+    </a>
+    {% if edit_document %}
+    <h1 class="mb-5 text-center">
+        Edytuj document
+    </h1>
+    {% endif %}
+    {% if share_document %}
+    <h1 class="mb-5 text-center">
+        Udostęnij dokument
+    </h1>
+    {% endif %}
+    {{ wtf.quick_form(form) }}
+</main>
+{% endblock %}

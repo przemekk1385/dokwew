@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Załaduj dokumenty{% endblock %}
+{% block body %}
+<main>
+    <a class="badge badge-dark mb-3" href="{{ url_for('home.admin_dashboard') }}" title="Zamknij">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        zamknij
+    </a>
+    <h1 class="mb-5 text-center">Załaduj dokumenty</h1>
+    <div class="row" id="dw-control">
+        <div class="col">
+            <button class="btn btn-light dw-dropzone">
+                <i aria-hidden="true" class="fa fa-plus-square"></i>
+                <span>Wybierz</span>
+            </button>
+            <button class="btn btn-light dw-start" type="submit">
+                <i aria-hidden="true" class="fa fa-upload"></i>
+                <span>Wyślij</span>
+            </button>
+            <button class="btn btn-light dw-cancel" type="reset">
+                <i aria-hidden="true" class="fa fa-ban"></i>
+                <span>Wyczyść</span>
+            </button>
+        </div>
+    </div>
+    <div class="m-5 progress" id="dw-progress">
+        <div
+         aria-valuemax="100"
+         aria-valuemin="0"
+         aria-valuenow="0"
+         class="bg-info progress-bar"
+         data-dz-uploadprogress
+         role="progressbar">0%</div>
+    </div>
+    <div class="documents" id="dw-list">
+        <div class="my-3 row" id="dw-template">
+            <div class="col">
+                <div class="row">
+                    <div class="col-9">
+                        <p data-dz-name></p>
+                        <span class="text-danger" data-dz-errormessage></span>
+                    </div>
+                    <div class="col-3 text-right">
+                        <p data-dz-size></p>
+                    </div>
+                </div>
+                <div class="align-items-center row">
+                    <div class="col-6 col-sm-6 col-md-4 col-lg-4">
+                        <div class="progress">
+                            <div
+                             aria-valuemax="100"
+                             aria-valuemin="0"
+                             aria-valuenow="0"
+                             class="bg-info progress-bar"
+                             data-dz-uploadprogress
+                             role="progressbar"></div>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-6 col-md-8 col-lg-8 text-right">
+                        <button class="btn btn-dark dw-start">
+                            <i aria-hidden="true" class="fa fa-upload"></i>
+                        </button>
+                        <button class="btn btn-dark dw-cancel" data-dz-remove>
+                            <i aria-hidden="true" class="fa fa-ban"></i>
+                        </button>
+                        <button class="btn btn-dark dw-delete" data-dz-remove>
+                            <i aria-hidden="true" class="fa fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/dropzone.js') }}"></script>
+<script>
+var previewNode = document.querySelector("#dw-template");
+previewNode.id = "";
+
+var previewTemplate = previewNode.parentNode.innerHTML;
+previewNode.parentNode.removeChild(previewNode);
+
+var myDropzone = new Dropzone(document.body, {
+    autoQueue: false,
+    acceptedFiles: "image/*,application/pdf",
+    clickable: ".dw-dropzone",
+    createImageThumbnails: false,
+    maxFilesize: 5,
+    parallelUploads: 20,
+    previewsContainer: "#dw-list",
+    previewTemplate: previewTemplate,
+    paramName: "document",
+    url: "{{ url_for('admin.upload_documents') }}",
+});
+
+function reset_progress_bar() {
+    document.querySelector("#dw-progress .progress-bar").style.width = "0%";
+    document.querySelector("#dw-progress .progress-bar").innerHTML = "0%";
+}
+
+myDropzone.on("addedfile", function(file) {
+    file.previewElement.querySelector(".dw-start").onclick = function() { myDropzone.enqueueFile(file); };
+});
+
+myDropzone.on("totaluploadprogress", function(progress) {
+    document.querySelector("#dw-progress .progress-bar").style.width = progress + "%";
+    document.querySelector("#dw-progress .progress-bar").innerHTML = Math.round(progress) + "%";
+});
+
+myDropzone.on("sending", function(file) {
+    document.querySelector("#dw-progress").style.opacity = "1";
+    file.previewElement.querySelector(".dw-start").setAttribute("disabled", "disabled");
+});
+
+myDropzone.on("queuecomplete", function(progress) {
+    document.querySelector("#dw-progress").style.opacity = "0";
+    reset_progress_bar();
+});
+
+document.querySelector("#dw-control .dw-start").onclick = function() {
+    myDropzone.enqueueFiles(myDropzone.getFilesWithStatus(Dropzone.ADDED));
+};
+
+document.querySelector("#dw-control .dw-cancel").onclick = function() {
+    myDropzone.removeAllFiles(true);
+    reset_progress_bar();
+};
+</script>
+{% endblock %}

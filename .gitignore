@@ -1,0 +1,10 @@
+__pycache__
+env
+instance
+media
+migrations
+upload
+mysql-passwd
+set.bat
+setup.py
+*.pyc

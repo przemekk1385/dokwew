@@ -1,0 +1,28 @@
+{% from "macros.html" import render_pagination %}
+{% extends "base.html" %}
+{% block title %}Przeglądaj wydarzenia{% endblock %}
+{% block body %}
+<main>
+    {% if meetings.items|length > 0 %}
+    <h1 class="mb-5 text-center">Lista wydarzeń</h1>
+        {% for meeting in meetings.items %}
+    <div class="align-items-top my-3 row">
+        <div class="col-12 col-sm-12 col-md-12 col-lg-4 mb-3">
+            <h3>{{ meeting.signature }} Posiedzenie
+            {% if board %}Rady {% endif %}
+            {% if management %}Zarządu {% endif %}
+            Izby</h3>
+            <span class="badge badge-pill badge-dark">{{ meeting.date|dateformat }}</span>
+            <a class="badge badge-pill badge-info" href="{{ url_for('home.meeting_details', meeting_id=meeting.id) }}"><i aria-hidden="true" class="fa fa-file-text-o mr-1"></i> {{ meeting.count }}</a>
+        </div>
+        <div class="col-12 col-sm-12 col-md-12 col-lg-8 text-justify">
+            {{ meeting.summary }}
+        </div>
+    </div>
+        {% endfor %}
+        {{ render_pagination(meetings, 'home.list_meetings') }}
+    {% endif %}
+</main>
+{% endblock %}
+{% block scripts %}
+{% endblock %}

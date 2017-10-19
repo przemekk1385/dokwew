@@ -1,0 +1,38 @@
+{% from "macros.html" import render_pagination %}
+{% extends "base.html" %}
+{% block title %}Zarządzaj wydarzeniami{% endblock %}
+{% block body %}
+<main>
+    {% if meetings.items|length > 0 %}
+    <h1 class="mb-5 text-center">Zarządzaj wydarzeniami</h1>
+        {% for meeting in meetings.items %}
+    <div class="align-items-center my-3 row">
+        <div class="col-auto">
+            {{ meeting.date|dateformat }}
+        </div>
+        <div class="col-auto mr-auto">
+            {{ meeting.signature }} Posiedzenie
+            {% if meeting.board %}Rady {% endif %}
+            {% if meeting.management %}Zarządu {% endif %}
+            Izby
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('admin.edit_meeting', meeting_id=meeting.id) }}" title="Edytuj wydarzenie">
+                <button class="btn btn-dark">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+            </a>
+            <a href="{{ url_for('admin.delete_meeting', meeting_id=meeting.id) }}" title="Usuń wydarzenie">
+                <button class="btn btn-dark">
+                    <i aria-hidden="true" class="fa fa-trash"></i>
+                </button>
+            </a>
+        </div>
+    </div>
+        {% endfor %}
+        {{ render_pagination(meetings, 'admin.manage_meetings') }}
+    {% endif %}
+</main>
+{% endblock %}
+{% block scripts %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body %}
+<main>
+    <h1 class="mb-5 text-center">Pulpit administratora</h1>
+    <div class="row justify-content-center">
+        <a class="btn btn-light col-5 col-sm-5 col-md-3 col-lg-2 mb-1 mx-1 text-center" href="{{ url_for('admin.upload_documents') }}">
+            <i aria-hidden="true" class="d-block fa fa-upload fa-5x mb-3"></i>
+            Załaduj<br>dokumenty
+        </a>
+        <a class="btn btn-light col-5 col-sm-5 col-md-3 col-lg-2 mb-1 mx-1 text-center" href="{{ url_for('admin.manage_documents') }}">
+            <i aria-hidden="true" class="d-block fa fa-pencil-square-o fa-5x mb-3"></i>
+            Zarządzaj<br>dokumentami
+        </a>
+        <a class="btn btn-light col-5 col-sm-5 col-md-3 col-lg-2 mb-1 mx-1 text-center" href="{{ url_for('admin.create_meeting') }}">
+            <i aria-hidden="true" class="d-block fa fa-calendar-plus-o fa-5x mb-3"></i>
+            Utwórz<br>wydarzenie
+        </a>
+        <a class="btn btn-light col-5 col-sm-5 col-md-3 col-lg-2 mb-1 mx-1 text-center" href="{{ url_for('admin.manage_meetings') }}">
+            <i aria-hidden="true" class="d-block fa fa-calendar fa-5x mb-3"></i>
+            Zarządzaj<br>wydarzeniami
+        </a>
+    </div>
+</main>
+{% endblock %}

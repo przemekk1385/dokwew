@@ -1,0 +1,56 @@
+body {
+  padding: 70px 0 20px 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Raleway', sans-serif;
+    font-weight: normal;
+}
+
+.dw-logo>img {
+  height: 20em;
+}
+
+/* initially hide total progress bar */
+#dw-progress {
+  opacity: 0;
+}
+
+#dw-progress>div {
+    width: 0;
+}
+
+/* initially hide delete button */
+#dw-list .dw-delete {
+  display: none;
+}
+
+/* hide start and calcel buttons after upload is finished */
+#dw-list .dz-success .dw-start,
+#dw-list .dz-success .dw-cancel {
+  display: none;
+}
+
+/* show delete button after upload is finished */
+#dw-list .dz-success .dw-delete {
+  display: inline-block;
+}
+
+
+/*
+    Third-party classes
+*/
+.form-group textarea {
+    height: 10em;
+}
+
+.help-block {
+    color: rgba(0,0,0,.5);
+    margin-top: .25em;
+}
+
+.help-block:before {
+    content: '\f06a';
+    font-family: 'FontAwesome';
+    margin-right: .5em;
+}

@@ -1,0 +1,77 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "base.html" %}
+{% block title %}
+    {% if create_meeting %}Utwórz wydarzenie{% endif %}
+    {% if edit_meeting %}Edytuj wydarzenie{% endif %}
+{% endblock %}
+{% block body %}
+<main>
+    {% if edit_meeting %}
+    <a class="badge badge-dark mb-3" href="{{ url_for('admin.manage_meetings') }}" title="Zamknij">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        zamknij
+    </a>
+    <h1 class="mb-5 text-center">
+        Edytuj wydarzenie
+    </h1>
+    {% endif %}
+    {% if create_meeting %}
+    <a class="badge badge-dark mb-3" href="{{ url_for('home.admin_dashboard') }}" title="Zamknij">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        zamknij
+    </a>
+    <h1 class="mb-5 text-center">
+        Utwórz wydarzenie
+    </h1>
+    {% endif %}
+    {{ wtf.quick_form(form) }}
+    {% if edit_meeting %}
+        {% if assigned_documents|length > 0 %}
+    <h2 class="mb-3 mt-5">Przypisane dokumenty</h2>
+            {% for document in assigned_documents %}
+    <div class="align-items-center my-3 row">
+        <div class="col-8 col-sm-6 col-md-8 col-lg-9 mb-3">
+            <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
+        </div>
+        <div class="col-4 col-sm-4 col-md-2 col-lg-2 mb-3">
+                <span class="badge badge-pill badge-dark">
+                    {{ document.type.name }}
+                    {% if document.type.signature_required %}
+                        nr {{ document.signature }}
+                    {% endif %}
+                </span>
+        </div>
+        <div class="col-12 col-sm-2 col-md-2 col-lg-1 text-right">
+            <a href="{{ url_for('admin.unassign_document', meeting_id=meeting_id, document_id=document.id) }}" title="Zwolnij dokument">
+                <button class="btn btn-dark">
+                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
+                </button>
+            </a>
+        </div>
+    </div>
+            {% endfor %}
+        {% endif %}
+        {% if unassigned_documents|length > 0 %}
+    <h2 class="mb-3 mt-5">Nieprzypisane dokumenty</h2>
+            {% for document in unassigned_documents %}
+    <div class="align-items-center my-3 row">
+        <div class="col-10">
+            <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
+        </div>
+        <div class="col-2 text-right">
+            <a href="{{ url_for('admin.assign_document', meeting_id=meeting_id, filename=document.filename) }}" title="Przypisz dokument">
+                <button class="btn btn-dark">
+                    <i aria-hidden="true" class="fa fa-square-o"></i>
+                </button>
+            </a>
+        </div>
+    </div>
+            {% endfor %}
+        {% endif %}
+    <a class="badge badge-dark my-3" href="{{ url_for('admin.manage_meetings') }}" title="Zamknij">
+        <i class="fa fa-times" aria-hidden="true"></i>
+        zamknij
+    </a>
+    {% endif %}
+</main>
+{% endblock %}

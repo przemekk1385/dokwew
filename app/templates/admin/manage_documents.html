@@ -1,0 +1,64 @@
+{% from "macros.html" import render_pagination %}
+{% extends "base.html" %}
+{% block title %}Zarządzaj dokumentami{% endblock %}
+{% block body %}
+<main>
+    {% if unassigned_documents|length > 0 or shared_documents.items|length > 0 %}
+    <h1 class="mb-5 text-center">Zarządzaj dokumentami</h1>
+    {% endif %}
+    {% if unassigned_documents|length > 0 %}
+    <h2>Nieprzypisane dokumenty</h2>
+        {% for document in unassigned_documents %}
+    <div class="align-items-center my-3 row">
+        <div class="col-12 col-sm-12 col-md-10 col-lg-10 mb-3">
+            {{ document.filename }}
+        </div>
+        <div class="col-12 col-sm-12 col-md-2 col-lg-2 text-right">
+            <a href="{{ url_for('admin.share_document', filename=document.filename) }}" title="Udostępnij dokument">
+                <button class="btn btn-dark">
+                    <i aria-hidden="true" class="fa fa-share-square-o "></i>
+                </button>
+            </a>
+            <a href="{{ url_for('admin.delete_document', filename=document.filename) }}" title="Usuń dokument">
+                <button class="btn btn-dark">
+                    <i aria-hidden="true" class="fa fa-trash"></i>
+                </button>
+            </a>
+        </div>
+    </div>
+        {% endfor %}
+    {% endif %}
+    {% if shared_documents.items|length > 0 %}
+    <h2 class="mb-3 mt-5">Udostępnione dokumenty</h2>
+        {% for document in shared_documents.items %}
+    <div class="align-items-top my-3 row">
+        <div class="col-12 col-sm-12 col-md-4 col-lg-3 mb-3">
+            <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
+        </div>
+        <div class="col-12 col-sm-12 col-md-8 col-lg-5 mb-3">
+            {{ document.description }}
+        </div>
+        <div class="col-6 col-sm-6 col-md-8 col-lg-2">
+            <span class="badge badge-pill badge-dark">{{ document.type.name }}</span>
+            <span class="badge badge-pill badge-info">{{ document.user.username }}</span>
+        </div>
+        <div class="col-6 col-sm-6 col-md-4 col-lg-2 text-right">
+            <a href="{{ url_for('admin.edit_document', document_id=document.id) }}" title="Edytuj dokument">
+                <button class="btn btn-dark">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+            </a>
+            <a href="{{ url_for('admin.stop_sharing', document_id=document.id) }}" title="Przerwij udostępnianie">
+                <button class="btn btn-dark">
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                </button>
+            </a>
+        </div>
+    </div>
+        {% endfor %}
+        {{ render_pagination(shared_documents, 'admin.manage_documents') }}
+    {% endif %}
+</main>
+{% endblock %}
+{% block scripts %}
+{% endblock %}

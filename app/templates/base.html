@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>{{ title }} | Dokumenty Wewnętrzne</title>
+    <link
+     crossorigin="anonymous"
+     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
+     integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+     rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,500" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='img/favicon.ico') }}">
+</head>
+<body>
+    <nav class="bg-light fixed-top navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="{{ url_for('home.homepage') }}">DokWew</a>
+        <button class="navbar-toggler" data-target="#dw-navbar" data-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="dw-navbar">
+            {% if current_user.is_authenticated %}
+            <ul class="navbar-nav mr-auto">
+                <li class="{% if request.endpoint == 'home.homepage' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.homepage') }}">Start</a></li>
+                {% if current_user.is_admin %}
+                <li class="{% if request.endpoint == 'home.admin_dashboard' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.admin_dashboard') }}">Pulpit</a></li>
+                {% else %}
+                <li class="{% if request.endpoint == 'home.dashboard' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.dashboard') }}">Pulpit</a></li>
+                {% endif %}
+                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Wyloguj</a></li>
+            </ul>
+            <span class="navbar-text">
+                Aktywny użytkownik: <strong>{{ current_user.username }}</strong>
+            </span>
+            {% else %}
+            <ul class="navbar-nav mr-auto">
+                <li class="{% if request.endpoint == 'home.homepage' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.homepage') }}">Start</a></li>
+                <li class="{% if request.endpoint == 'auth.login' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('auth.login') }}">Zaloguj</a></li>
+            </ul>
+            {% endif %}
+        </div>
+    </nav>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+        <div class="row my-3">
+            <div class="alert alert-{{ category }} col" role="alert">{{ message }}</div>
+        </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        {% block body %}
+        {% endblock %}
+    </div>
+    <script
+     crossorigin="anonymous"
+     integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+     src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script
+     crossorigin="anonymous"
+     integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4"
+     src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+    <script
+     crossorigin="anonymous"
+     integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1"
+     src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+    <script src="https://use.fontawesome.com/3ec293edf3.js"></script>
+    {% block scripts %}
+    {% endblock %}
+</body>
+</html>
