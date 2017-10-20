@@ -58,7 +58,7 @@ def list_meetings(page):
             board = True
         if user.id == app.config['MANAGEMENT_ID']:
             management = True
-    return render_template('home/details_list_meetings.html',
+    return render_template('home/list_meetings.html',
                            board=board,
                            management=management,
                            meetings=meetings,
