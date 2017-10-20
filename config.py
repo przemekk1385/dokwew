@@ -9,8 +9,6 @@ class Config(object):
     BABEL_DEFAULT_LOCALE = 'pl'
     ITEMS_PER_PAGE = 20
     MAX_FILENAME_LENGTH = 100
-    MEDIA_DIR = os.path.join(os.getcwd(), 'media')
-    UPLOAD_DIR = os.path.join(os.getcwd(), 'upload')
 
 
 class Development(Config):
