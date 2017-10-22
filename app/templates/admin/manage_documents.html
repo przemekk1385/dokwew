@@ -38,23 +38,21 @@
         <div class="col-12 col-sm-12 col-md-8 col-lg-5 mb-1 mb-sm-1 mb-md-1 mb-lg-0">
             {{ document.description }}
         </div>
-        <div class="align-items-center col-12 col-sm-12 col-md-12 col-lg-4 row">
-            <div class="col-6 col-sm-6 col-md-8 col-lg-6">
-                <span class="badge badge-pill badge-dark">{{ document.type.name }}</span>
-                <span class="badge badge-pill badge-info">{{ document.user.username }}</span>
-            </div>
-            <div class="col-6 col-sm-6 col-md-4 col-lg-6 text-right">
-                <a href="{{ url_for('admin.edit_document', document_id=document.id) }}" title="Edytuj dokument">
-                    <button class="btn btn-dark">
-                        <i class="fa fa-pencil" aria-hidden="true"></i>
-                    </button>
-                </a>
-                <a href="{{ url_for('admin.stop_sharing', document_id=document.id) }}" title="Przerwij udostępnianie">
-                    <button class="btn btn-dark">
-                        <i class="fa fa-ban" aria-hidden="true"></i>
-                    </button>
-                </a>
-            </div>
+        <div class="col-6 col-sm-6 col-md-8 col-lg-2">
+            <span class="badge badge-pill badge-dark">{{ document.type.name }}</span>
+            <span class="badge badge-pill badge-info">{{ document.user.username }}</span>
+        </div>
+        <div class="col-6 col-sm-6 col-md-4 col-lg-2 text-right">
+            <a href="{{ url_for('admin.edit_document', document_id=document.id) }}" title="Edytuj dokument">
+                <button class="btn btn-dark">
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+            </a>
+            <a href="{{ url_for('admin.stop_sharing', document_id=document.id) }}" title="Przerwij udostępnianie">
+                <button class="btn btn-dark">
+                    <i class="fa fa-ban" aria-hidden="true"></i>
+                </button>
+            </a>
         </div>
     </div>
         {% endfor %}
