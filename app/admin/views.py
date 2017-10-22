@@ -76,6 +76,7 @@ def assign_document(meeting_id, filename):
         filter_by(is_standlone=False)
     form.type_id.choices = types
     if form.validate_on_submit():
+        filename = secure_filename(filename)
         type = Type.query.get_or_404(form.type_id.data)
         if type.signature_required and form.signature.data == '':
             flash('Typ %s wymaga podania oznaczenia dokumentu.' % type.name,
@@ -121,6 +122,7 @@ def assign_document(meeting_id, filename):
 @login_required
 def delete_document(filename):
     check_admin()
+    filename = secure_filename(filename)
     dst = os.path.join(app.config['UPLOAD_DIR'], filename)
     if os.path.isfile(dst):
         os.remove(dst)
@@ -170,6 +172,7 @@ def share_document(filename):
         filter(~User.is_admin).all()
     form.user_id.choices = users
     if form.validate_on_submit():
+        filename = secure_filename(filename)
         if len(filename) > app.config['MAX_FILENAME_LENGTH']:
             flash('Maksymalna długość nazwy pliku to %i znaków.' %
                   app.config['MAX_FILENAME_LENGTH'], 'danger')
@@ -266,6 +269,7 @@ def manage_meetings(page):
         flash('Brak wydarzeń.', 'info')
     else:
         for meeting in meetings.items:
+            meeting.count = meeting.documents.count()
             if meeting.user_id == app.config['BOARD_ID']:
                 meeting.board = True
             if meeting.user_id == app.config['MANAGEMENT_ID']:

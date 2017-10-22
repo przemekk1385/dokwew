@@ -1,8 +1,11 @@
-from flask import abort, current_app as app, flash, render_template
+from flask import (abort, current_app as app, flash, render_template,
+                   redirect, send_from_directory, url_for)
 from flask_login import current_user, login_required
 
 from . import home
-from ..models import Meeting, User
+from ..models import Document, Meeting, User
+
+import os
 
 
 @home.route('/')
@@ -37,6 +40,19 @@ def list_documents(page):
     return render_template('home/list_documents.html',
                            documents=documents,
                            title='Lista dokumentów')
+
+
+@home.route('/documents/download/<int:document_id>')
+@login_required
+def download_document(document_id):
+    document = Document.query.get_or_404(document_id)
+    if os.path.isfile(os.path.join(app.config['MEDIA_DIR'],
+                      document.filename)):
+        return send_from_directory(app.config['MEDIA_DIR'], document.filename,
+                                   as_attachment=True)
+    else:
+        flash('Nie można pobrać dokumentu %s.' % document.filename, 'danger')
+        return redirect(url_for('home.dashboard'))
 
 
 @home.route('/meetings', defaults={'page': 1})

@@ -30,10 +30,10 @@
     <h2 class="mb-3 mt-5">Przypisane dokumenty</h2>
             {% for document in assigned_documents %}
     <div class="align-items-center my-3 row">
-        <div class="col-8 col-sm-6 col-md-8 col-lg-9 mb-3">
+        <div class="col-8 col-sm-6 col-md-8 col-lg-9 mb-1 mb-sm-1 mb-md-0">
             <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
         </div>
-        <div class="col-4 col-sm-4 col-md-2 col-lg-2 mb-3">
+        <div class="col-4 col-sm-4 col-md-2 col-lg-2 mb-1 mb-sm-1 mb-md-0">
                 <span class="badge badge-pill badge-dark">
                     {{ document.type.name }}
                     {% if document.type.signature_required %}
