@@ -44,7 +44,7 @@ def list_documents(page):
 
 @home.route('/documents/download/<int:document_id>')
 @login_required
-def download_document(document_id):
+def download_document(document_id):  # todo: check user id before serving
     document = Document.query.get_or_404(document_id)
     if os.path.isfile(os.path.join(app.config['MEDIA_DIR'],
                       document.filename)):

@@ -17,7 +17,7 @@
             Izby
         </div>
         <div class="col-6 col-sm-2 col-md-2 col-lg-2 mb-1 mb-sm-1 mb-md-0 text-right">
-            <span class="badge badge-pill badge-info"><i aria-hidden="true" class="fa fa-file-text-o mr-1"></i>{{ meeting.count }}</a>
+            <span class="badge badge-pill badge-info" title="Przypisane dokumenty"><i aria-hidden="true" class="fa fa-file-text-o mr-1"></i>{{ meeting.count }}</a>
         </div>
         <div class="col-12 col-sm-12 col-md-2 col-lg-2 text-right">
             <a href="{{ url_for('admin.edit_meeting', meeting_id=meeting.id) }}" title="Edytuj wydarzenie">

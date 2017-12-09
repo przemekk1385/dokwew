@@ -39,8 +39,8 @@
             {{ document.description }}
         </div>
         <div class="col-6 col-sm-6 col-md-8 col-lg-2">
-            <span class="badge badge-pill badge-dark">{{ document.type.name }}</span>
-            <span class="badge badge-pill badge-info">{{ document.user.username }}</span>
+            <span class="badge badge-pill badge-dark" title="Typ dokumentu">{{ document.type.name }}</span>
+            <span class="badge badge-pill badge-info" title="Widoczny dla">{{ document.user.username }}</span>
         </div>
         <div class="col-6 col-sm-6 col-md-4 col-lg-2 text-right">
             <a href="{{ url_for('admin.edit_document', document_id=document.id) }}" title="Edytuj dokument">

@@ -34,7 +34,7 @@
             <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
         </div>
         <div class="col-4 col-sm-4 col-md-2 col-lg-2 mb-1 mb-sm-1 mb-md-0">
-                <span class="badge badge-pill badge-dark">
+                <span class="badge badge-pill badge-dark" title="Typ i oznaczenie dokumentu">
                     {{ document.type.name }}
                     {% if document.type.signature_required %}
                         nr {{ document.signature }}
