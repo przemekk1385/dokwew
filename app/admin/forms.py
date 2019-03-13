@@ -31,9 +31,10 @@ class CreateEditMeetingForm(FlaskForm):
         'Oznaczenie',
         validators=[
             InputRequired(),
-            Regexp('^[IVXL]+$', message='Dozwolone znaki to I, V, X, L.')
+            Regexp('^[IVXL]+$|^\d+$', message=('Dozwolone znaki to I, V, X, L,'
+                                               + ' lub cyfry od 0 do 9.'))
         ],
-        description='Cyfra rzymska'
+        description='Cyfra rzymska lub arabska'
     )
     summary = TextAreaField('Podsumowanie', validators=[InputRequired()])
     user_id = SelectField('Widoczne dla', coerce=int,
