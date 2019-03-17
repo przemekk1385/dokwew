@@ -4,21 +4,18 @@
 {% block body %}
 <main>
     {% if documents.items|length > 0 %}
-    <h1 class="mb-5 text-center">Lista dokumentów</h1>
+    <h3 class="mb-5 text-center">Lista dokumentów</h3>
+    <ol>
         {% for document in documents.items %}
-    <div class="align-items-top my-3 row">
-        <div class="col-12 col-sm-4 col-md-4 col-lg-2 mb-1 mb-sm-1 mb-md-1 mb-lg-0">
-            <span class="badge badge-pill badge-dark" title="Typ dokumentu">{{ document.type.name }}</span>
-            <a class="badge badge-pill badge-info" href="{{ url_for('home.download_document', document_id=document.id) }}" title="Pobierz dokument"><i class="fa fa-download" aria-hidden="true"></i></a>
-        </div>
-        <div class="col-12 col-sm-8 col-md-8 col-lg-4 mb-1 mb-sm-1 mb-md-1 mb-lg-0">
-            <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
-        </div>
-        <div class="col-12 col-sm-12 col-md-6 col-lg-6">
-            {{ document.description }}
-        </div>
-    </div>
+        <li">
+                <span class="d-inline-block mb-1">{{ document.description }}</span><br />
+                <a class="link-unstyled" href="{{ url_for('home.download_document', document_id=document.id) }}" title="Pobierz {{ document.filename }}">
+                    <i class="fa fa-download mr-1" aria-hidden="true"></i>
+                    <span class="small">{{ document.filename|substr }}</span>
+                </a>
+        </li>
         {% endfor %}
+    </ol>
         {{ render_pagination(documents, 'home.list_documents') }}
     {% endif %}
 </main>

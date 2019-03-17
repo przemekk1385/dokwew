@@ -1,39 +1,35 @@
 {% from "macros.html" import render_pagination %}
 {% extends "base.html" %}
-{% block title %}Zarządzaj wydarzeniami{% endblock %}
+{% block title %}Zarządzaj posiedzeniami{% endblock %}
 {% block body %}
 <main>
     {% if meetings.items|length > 0 %}
-    <h1 class="mb-5 text-center">Zarządzaj wydarzeniami</h1>
+    <h3 class="mb-5 text-center">Zarządzaj posiedzeniami</h3>
         {% for meeting in meetings.items %}
-    <div class="align-items-center my-3 row">
-        <div class="col-4 col-sm-4 col-md-2 col-lg-2 mb-1 mb-sm-1 mb-md-0">
+    <div class="my-3 row">
+        <div class="col-5 col-sm-3 col-md-3 mb-3">
             {{ meeting.date|dateformat }}
         </div>
-        <div class="col-8 col-sm-6 col-md-6 col-lg-6 mb-1 mb-sm-1 mb-md-0">
+        <div class="col-7 col-sm-9 col-md-5 mb-3 mr-md-auto">
             {{ meeting.signature }} Posiedzenie
             {% if meeting.board %}Rady {% endif %}
             {% if meeting.management %}Zarządu {% endif %}
             Izby
         </div>
-        <div class="col-6 col-sm-2 col-md-2 col-lg-2 mb-1 mb-sm-1 mb-md-0 text-right">
+        <div class="col-6 col-md-auto mr-auto mr-md-0">
             <span class="badge badge-pill badge-info" title="Przypisane dokumenty"><i aria-hidden="true" class="fa fa-file-text-o mr-1"></i>{{ meeting.count }}</a>
         </div>
-        <div class="col-12 col-sm-12 col-md-2 col-lg-2 text-right">
-            <a href="{{ url_for('admin.edit_meeting', meeting_id=meeting.id) }}" title="Edytuj wydarzenie">
-                <button class="btn btn-dark">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                </button>
+        <div class="col-auto">
+            <a class="btn btn-dark" href="{{ url_for('admin.edit_meeting', meeting_id=meeting.id) }}" title="Edytuj posiedzenie">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
             </a>
-            <a href="{{ url_for('admin.delete_meeting', meeting_id=meeting.id) }}" title="Usuń wydarzenie">
-                <button class="btn btn-dark">
-                    <i aria-hidden="true" class="fa fa-trash"></i>
-                </button>
+            <a class="btn btn-danger" href="{{ url_for('admin.delete_meeting', meeting_id=meeting.id) }}" title="Usuń posiedzenie">
+                <i aria-hidden="true" class="fa fa-trash"></i>
             </a>
         </div>
     </div>
         {% endfor %}
-        {{ render_pagination(meetings, 'admin.manage_meetings') }}
+        {{ render_pagination(meetings, 'admin.manage_meetings', filters) }}
     {% endif %}
 </main>
 {% endblock %}

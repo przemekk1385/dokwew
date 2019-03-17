@@ -2,13 +2,9 @@
 {% block title %}Szczegóły wydarzenia{% endblock %}
 {% block body %}
 <main>
-    <a class="badge badge-dark mb-3" href="{{ url_for('home.list_meetings') }}" title="Zamknij">
-        <i class="fa fa-times" aria-hidden="true"></i>
-        zamknij
-    </a>
-    <h1 class="mb-5 text-center">Szczegóły wydarzenia</h1>
+    <h3 class="mb-5 text-center">Szczegóły posiedzenia</h3>
     <div class="row">
-        <div class="col-12 col-sm-12 col-md-2"><strong class="text-dark">Wydarzenie:</strong></div>
+        <div class="col-12 col-sm-12 col-md-2"><strong class="text-dark">Nazwa:</strong></div>
         <div class="col">
         {{ meeting.signature }} Posiedzenie
         {% if meeting.board %}Rady {% endif %}
@@ -23,23 +19,39 @@
         </div>
     </div>
     {% if documents|length > 0 %}
-    <h2 class="mb-3 mt-5">Przypisane dokumenty</h2>
         {% for document in documents %}
     <div class="align-items-top my-3 row">
-        <div class="col-12 col-sm-4 col-md-4 col-lg-2 mb-1 mb-sm-1 mb-md-0">
-                <span class="badge badge-pill badge-dark" title="Typ i oznaczenie dokumentu">
-            {{ document.type.name }}
-            {% if document.type.signature_required %}
-                nr {{ document.signature }}
-            {% endif %}
-                </span>
-                <a class="badge badge-pill badge-info" href="{{ url_for('home.download_document', document_id=document.id) }}" title="Pobierz dokument"><i class="fa fa-download" aria-hidden="true"></i></a>
+        <div class="col-12 col-lg-8 col-md-8 mb-3 mb-md-0 mr-md-auto">
+            <div class="row">
+                <div class="col-12">
+                    <i aria-hidden="true" class="fa fa-2x fa-paperclip mr-1"></i><span title="{{ document.filename }}"> {{ document.filename|substr }}</span>
+                    <a class="link-unstyled ml-3" href="{{ url_for('home.download_document', document_id=document.id) }}" title="Pobierz {{ document.filename }}">
+                        <i class="fa fa-download mr-1" aria-hidden="true"></i>
+                    </a>
+                </div>
+                {% if document.description %}
+                <div class="col-12 mt-3 rounded small text-muted">
+                    <span class="d-inline-block">
+                        <strong>Opis: </strong>{{ document.description }}
+                    </span>
+                </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="col-12 col-sm-8 col-md-8col-lg-10">
-            <span title="{{ document.filename }}">{{ document.filename }}</span>
+        <div class="col-6 col-md-auto mr-auto mr-md-0">
+            <span class="badge badge-pill badge-dark" title="Typ i oznaczenie dokumentu">
+                {{ document.type.name }}
+                {% if document.type.signature_required %}
+                    nr {{ document.signature }}
+                {% endif %}
+            </span>
         </div>
     </div>
         {% endfor %}
+    {% else %}
+    <div class="alert alert-info">
+        Do tego posiedzenia nie przypisano żadnych dokumentów.    
+    </div>
     {% endif %}
 </main>
 {% endblock %}

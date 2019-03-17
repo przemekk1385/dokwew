@@ -57,8 +57,8 @@ def manage_documents(page):
         flash('Brak udostępnionych dokumentów.', 'info')
     return render_template('admin/manage_documents.html',
                            shared_documents=shared_documents,
-                           unassigned_documents=unassigned_documents,
-                           title='Zarządzaj dokumentami')
+                           title='Zarządzaj dokumentami',
+                           unassigned_documents=unassigned_documents)
 
 
 @admin.route('/documents/assign/<int:meeting_id>/<filename>',
@@ -94,16 +94,18 @@ def assign_document(meeting_id, filename):
                 os.rename(src, dst)
                 type = Type.query.get_or_404(form.type_id.data)
                 if form.signature.data != '' and not type.signature_required:
-                    document = Document(filename=filename,
-                                        type_id=form.type_id.data,
-                                        meeting_id=meeting_id)
+                    document = Document(description=form.description.data,
+                                        filename=filename,
+                                        meeting_id=meeting_id,
+                                        type_id=form.type_id.data)
                     flash('Zignorowano oznaczenie dokumentu dla typu %s.' %
                           type.name, 'warning')
                 else:
-                    document = Document(signature=form.signature.data,
+                    document = Document(description=form.description.data,
                                         filename=filename,
-                                        type_id=form.type_id.data,
-                                        meeting_id=meeting_id)
+                                        meeting_id=meeting_id,
+                                        signature=form.signature.data,
+                                        type_id=form.type_id.data)
                 db.session.add(document)
                 db.session.commit()
                 flash('Przypisano dokument', 'success')
@@ -111,7 +113,8 @@ def assign_document(meeting_id, filename):
                                         meeting_id=meeting_id))
     else:
         flash_errors(form)
-    return render_template('admin/assign_document.html',
+    return render_template('admin/assign_edit_document.html',
+                           assign_document=True,
                            document=filename,
                            form=form,
                            meeting=meeting,
@@ -132,9 +135,40 @@ def delete_document(filename):
     return redirect(url_for('admin.manage_documents'))
 
 
-@admin.route('/documents/edit/<int:document_id>', methods=['GET', 'POST'])
+@admin.route('/documents/edit/assigned/<int:document_id>/<int:meeting_id>',
+             methods=['GET', 'POST'])
 @login_required
-def edit_document(document_id):
+def edit_assigned_document(document_id, meeting_id):
+    check_admin()
+    document = Document.query.get_or_404(document_id)
+    meeting = Meeting.query.get_or_404(meeting_id)
+    form = AssignDocumentForm(obj=document)
+    types = Type.query.with_entities(Type.id, Type.name).\
+        filter_by(is_standlone=False)
+    form.type_id.choices = types
+    if form.validate_on_submit():
+        document.signature = form.signature.data
+        document.description = form.description.data
+        document.type_id = form.type_id.data
+        db.session.commit()
+        flash('Zmieniono dokument.', 'success')
+        return redirect(url_for('admin.edit_meeting', meeting_id=meeting_id))
+    else:
+        flash_errors(form)
+    form.description = document.description
+    form.signature = document.signature
+    return render_template('admin/assign_edit_document.html',
+                           document=document.filename,
+                           edit_document=True,
+                           form=form,
+                           meeting=meeting,
+                           title='Edytuj przypisany dokument')
+
+
+@admin.route('/documents/edit/shared/<int:document_id>',
+             methods=['GET', 'POST'])
+@login_required
+def edit_shared_document(document_id):
     check_admin()
     document = Document.query.get_or_404(document_id)
     form = EditShareDocumentForm(obj=document)
@@ -155,9 +189,9 @@ def edit_document(document_id):
         flash_errors(form)
     form.description = document.description
     return render_template('admin/edit_share_document.html',
-                           form=form,
                            edit_document=True,
-                           title='Edytuj dokument')
+                           form=form,
+                           title='Edytuj udostępniony dokument')
 
 
 @admin.route('/documents/share/<filename>', methods=['GET', 'POST'])
@@ -264,9 +298,11 @@ Meeting's related functions
 @login_required
 def manage_meetings(page):
     check_admin()
-    meetings = Meeting.query.paginate(page, app.config['ITEMS_PER_PAGE'])
+    meetings = Meeting.query\
+                      .order_by(Meeting.date.desc())\
+                      .paginate(page, app.config['ITEMS_PER_PAGE'])
     if meetings.total == 0:
-        flash('Brak wydarzeń.', 'info')
+        flash('Brak posiedzeń.', 'info')
     else:
         for meeting in meetings.items:
             meeting.count = meeting.documents.count()
@@ -275,8 +311,9 @@ def manage_meetings(page):
             if meeting.user_id == app.config['MANAGEMENT_ID']:
                 meeting.management = True
     return render_template('admin/manage_meetings.html',
+                           filters={},
                            meetings=meetings,
-                           title='Zarządzaj wydarzeniami')
+                           title='Zarządzaj posiedzeniami')
 
 
 @admin.route('/meetings/create', methods=['GET', 'POST'])
@@ -294,14 +331,14 @@ def create_meeting():
                           user_id=form.user_id.data)
         db.session.add(meeting)
         db.session.commit()
-        flash('Dodano wydarzenie.', 'success')
+        flash('Dodano posiedzenie.', 'success')
         return redirect(url_for('home.admin_dashboard'))
     else:
         flash_errors(form)
     return render_template('admin/create_edit_meeting.html',
                            create_meeting=True,
                            form=form,
-                           title='Utwórz wydarzenie')
+                           title='Utwórz posiedzenie')
 
 
 @admin.route('/meetings/delete/<int:meeting_id>')
@@ -310,11 +347,11 @@ def delete_meeting(meeting_id):
     check_admin()
     meeting = Meeting.query.get_or_404(meeting_id)
     if meeting.documents.count() > 0:
-        flash('Wydarzenie ma przypisane dokumenty.', 'danger')
+        flash('Posiedzenie ma przypisane dokumenty.', 'danger')
     else:
         db.session.delete(meeting)
         db.session.commit()
-        flash('Usunięto wydarzenie', 'success')
+        flash('Usunięto posiedzenie', 'success')
     return redirect(url_for('admin.manage_meetings'))
 
 
@@ -333,7 +370,7 @@ def edit_meeting(meeting_id):
         meeting.summary = form.summary.data
         meeting.user_id = form.user_id.data
         db.session.commit()
-        flash('Zmieniono wydarzenie.', 'success')
+        flash('Zmieniono posiedzenie.', 'success')
         return redirect(url_for('admin.manage_meetings'))
     else:
         flash_errors(form)
@@ -346,5 +383,5 @@ def edit_meeting(meeting_id):
                            edit_meeting=True,
                            form=form,
                            meeting_id=meeting_id,
-                           title='Edytuj wydarzenie',
+                           title='Edytuj posiedzenie',
                            unassigned_documents=documents)

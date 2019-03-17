@@ -43,20 +43,29 @@ class CreateEditMeetingForm(FlaskForm):
 
 
 class AssignDocumentForm(FlaskForm):
+    type_id = SelectField('Typ', coerce=int,
+                          validators=[InputRequired()])
     signature = StringField(
         'Oznaczenie',
         validators=[
-            Regexp('^$|^\d+$',
+            Regexp(r'^$|^\d+$',
                    message='Dozwolone są tylko cyfry lub puste pole.')
         ],
         description='Cyfra arabska lub puste pole'
     )
-    type_id = SelectField('Typ', coerce=int,
-                          validators=[InputRequired()])
+    description = StringField(
+        'Opis',
+        validators=[
+            Length(max=100)
+        ],
+        description='Maksymalnie 100 znaków. Pole nieobowiązkowe.'
+    )
     submit = SubmitField('Zapisz')
 
 
 class EditShareDocumentForm(FlaskForm):
+    type_id = SelectField('Typ', coerce=int,
+                          validators=[InputRequired()])
     description = StringField(
         'Opis',
         validators=[
@@ -65,8 +74,6 @@ class EditShareDocumentForm(FlaskForm):
         ],
         description='Maksymalnie 100 znaków.'
     )
-    type_id = SelectField('Typ', coerce=int,
-                          validators=[InputRequired()])
     user_id = SelectField('Widoczne dla', coerce=int,
                           validators=[InputRequired()])
     submit = SubmitField('Zapisz')

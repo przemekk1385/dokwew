@@ -5,15 +5,18 @@
 {% endblock %}
 {% block body %}
 <main>
-    <a class="badge badge-dark mb-3" href="{{ url_for('admin.edit_meeting', meeting_id=meeting.id) }}" title="Zamknij">
-        <i class="fa fa-times" aria-hidden="true"></i>
-        zamknij
-    </a>
-    <h1 class="mb-5 text-center">
+    {% if assign_document %}
+    <h3 class="mb-5 text-center">
         Przypisz dokument
+    </h3>
+    {% endif %}
+    {% if edit_document %}
+    <h1 class="mb-5 text-center">
+        Edytuj przypisany dokument
     </h1>
+    {% endif %}
     <div class="row">
-        <div class="col-12 col-sm-12 col-md-2"><strong class="text-dark">Wydarzenie:</strong></div>
+        <div class="col-12 col-sm-12 col-md-2"><strong class="text-dark">Nazwa:</strong></div>
         <div class="col">
             {{ meeting.signature }} Posiedzenie
             {% if meeting.board %}Rady {% endif %}

@@ -8,7 +8,7 @@ class Config(object):
 
     BABEL_DEFAULT_LOCALE = 'pl'
     BOARD_ID = 2
-    ITEMS_PER_PAGE = 20
+    ITEMS_PER_PAGE = 5
     MAX_FILENAME_LENGTH = 100
     MANAGEMENT_ID = 3
     MEDIA_DIR = os.path.join(os.getcwd(), 'media')

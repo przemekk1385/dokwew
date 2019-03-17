@@ -1,8 +1,9 @@
 from datetime import datetime
 from flask_login import UserMixin
 from werkzeug.security import check_password_hash, generate_password_hash
+import os
 
-from app import db, login_manager
+from app import app_config, db, login_manager
 
 
 class User(UserMixin, db.Model):
@@ -13,6 +14,10 @@ class User(UserMixin, db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     documents = db.relationship('Document', backref='user', lazy='dynamic')
     meetings = db.relationship('Meeting', backref='user', lazy='dynamic')
+
+    @property
+    def is_management(self):
+        return True if self.id == getattr(config, 'MANAGEMENT_ID') else False
 
     @property
     def password(self):
@@ -75,3 +80,6 @@ class Type(db.Model):
 
     def __repr__(self):
         return '<Type: {}>'.format(self.name)
+
+
+config = app_config[os.getenv('FLASK_CONFIG')]

@@ -6,12 +6,12 @@
     <title>{{ title }} | Dokumenty Wewnętrzne</title>
     <link
      crossorigin="anonymous"
-     href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css"
-     integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+     href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+     integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
      rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Raleway:400,500" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='img/favicon.ico') }}">
+    <link href="{{ url_for('static', filename='images/favicon.ico') }}">
 </head>
 <body>
     <nav class="bg-light fixed-top navbar navbar-expand-lg navbar-light">
@@ -22,17 +22,20 @@
         <div class="collapse navbar-collapse" id="dw-navbar">
             {% if current_user.is_authenticated %}
             <ul class="navbar-nav mr-auto">
+                <!--
                 <li class="{% if request.endpoint == 'home.homepage' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.homepage') }}">Start</a></li>
+                //-->
                 {% if current_user.is_admin %}
                 <li class="{% if request.endpoint == 'home.admin_dashboard' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.admin_dashboard') }}">Pulpit</a></li>
                 {% else %}
-                <li class="{% if request.endpoint == 'home.dashboard' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.dashboard') }}">Pulpit</a></li>
+                <li class="{% if request.endpoint == 'home.list_documents' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.list_documents') }}">Dokumenty</a></li>
+                    {%  if current_user.is_management %}
+                <li class="{% if request.endpoint == 'home.list_votes' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.list_votes') }}">Uchwały</a></li>
+                    {% endif %}
+                <li class="{% if request.endpoint == 'home.list_meetings' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.list_meetings') }}">Posiedzenia</a></li>
                 {% endif %}
-                <li class="nav-item"><a class="nav-link" href="{{ url_for('auth.logout') }}">Wyloguj</a></li>
             </ul>
-            <span class="navbar-text">
-                Aktywny użytkownik: <strong>{{ current_user.username }}</strong>
-            </span>
+            <strong>{{ current_user.username }}</strong> <a class="btn btn-danger ml-3 rounded-circle" href="{{ url_for('auth.logout') }}" title="Wyloguj"><i class="fa fa-sign-out" aria-hidden="true"></i></a>
             {% else %}
             <ul class="navbar-nav mr-auto">
                 <li class="{% if request.endpoint == 'home.homepage' %}active {% endif %}nav-item"><a class="nav-link" href="{{ url_for('home.homepage') }}">Start</a></li>

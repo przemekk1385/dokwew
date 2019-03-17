@@ -1,39 +1,42 @@
 {% import "bootstrap/wtf.html" as wtf %}
 {% extends "base.html" %}
 {% block title %}
-    {% if create_meeting %}Utwórz wydarzenie{% endif %}
-    {% if edit_meeting %}Edytuj wydarzenie{% endif %}
+    {% if create_meeting %}Utwórz posiedzenie{% endif %}
+    {% if edit_meeting %}Edytuj posiedzenie{% endif %}
 {% endblock %}
 {% block body %}
 <main>
     {% if edit_meeting %}
-    <a class="badge badge-dark mb-3" href="{{ url_for('admin.manage_meetings') }}" title="Zamknij">
-        <i class="fa fa-times" aria-hidden="true"></i>
-        zamknij
-    </a>
-    <h1 class="mb-5 text-center">
-        Edytuj wydarzenie
-    </h1>
+    <h3 class="mb-5 text-center">
+        Edytuj posiedzenie
+    </h3>
     {% endif %}
     {% if create_meeting %}
-    <a class="badge badge-dark mb-3" href="{{ url_for('home.admin_dashboard') }}" title="Zamknij">
-        <i class="fa fa-times" aria-hidden="true"></i>
-        zamknij
-    </a>
-    <h1 class="mb-5 text-center">
-        Utwórz wydarzenie
-    </h1>
+    <h3 class="mb-5 text-center">
+        Utwórz posiedzenie
+    </h3>
     {% endif %}
     {{ wtf.quick_form(form) }}
     {% if edit_meeting %}
         {% if assigned_documents|length > 0 %}
+    <!--
     <h2 class="mb-3 mt-5">Przypisane dokumenty</h2>
+    //-->
             {% for document in assigned_documents %}
-    <div class="align-items-center my-3 row">
-        <div class="col-8 col-sm-6 col-md-8 col-lg-9 mb-1 mb-sm-1 mb-md-0">
-            <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
+    <div class="align-items-top my-3 row">
+        <div class="col-12 col-lg-8 col-md-8 mb-3 mb-md-0 mr-md-auto">
+            <div class="row">
+                <div class="col-12">
+                    <i aria-hidden="true" class="fa fa-2x fa-paperclip mr-1"></i><span title="{{ document.filename }}"> {{ document.filename|substr }}</span>
+                </div>
+                {% if document.description %}
+                <div class="col-12 mt-3 rounded">
+                    <strong>Opis: </strong>{{ document.description }}
+                </div>
+                {% endif %}
+            </div>
         </div>
-        <div class="col-4 col-sm-4 col-md-2 col-lg-2 mb-1 mb-sm-1 mb-md-0">
+        <div class="col-6 col-md-auto mr-auto mr-md-0">
                 <span class="badge badge-pill badge-dark" title="Typ i oznaczenie dokumentu">
                     {{ document.type.name }}
                     {% if document.type.signature_required %}
@@ -41,11 +44,12 @@
                     {% endif %}
                 </span>
         </div>
-        <div class="col-12 col-sm-2 col-md-2 col-lg-1 text-right">
-            <a href="{{ url_for('admin.unassign_document', meeting_id=meeting_id, document_id=document.id) }}" title="Zwolnij dokument">
-                <button class="btn btn-dark">
-                    <i class="fa fa-check-square-o" aria-hidden="true"></i>
-                </button>
+        <div class="col-auto">
+            <a class="btn btn-dark" href="{{ url_for('admin.edit_assigned_document', document_id=document.id, meeting_id=meeting_id) }}" title="Edytuj dokument">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </a>
+            <a class="btn btn-warning" href="{{ url_for('admin.unassign_document', meeting_id=meeting_id, document_id=document.id) }}" title="Zwolnij dokument">
+                <i class="fa fa-check-square-o" aria-hidden="true"></i>
             </a>
         </div>
     </div>
@@ -55,23 +59,17 @@
     <h2 class="mb-3 mt-5">Nieprzypisane dokumenty</h2>
             {% for document in unassigned_documents %}
     <div class="align-items-center my-3 row">
-        <div class="col-10">
+        <div class="col-auto mr-auto">
             <span title="{{ document.filename }}">{{ document.filename|substr }}</span>
         </div>
-        <div class="col-2 text-right">
-            <a href="{{ url_for('admin.assign_document', meeting_id=meeting_id, filename=document.filename) }}" title="Przypisz dokument">
-                <button class="btn btn-dark">
-                    <i aria-hidden="true" class="fa fa-square-o"></i>
-                </button>
+        <div class="col-auto">
+            <a class="btn btn-dark" href="{{ url_for('admin.assign_document', meeting_id=meeting_id, filename=document.filename) }}" title="Przypisz dokument">
+                <i aria-hidden="true" class="fa fa-square-o"></i>
             </a>
         </div>
     </div>
             {% endfor %}
         {% endif %}
-    <a class="badge badge-dark my-3" href="{{ url_for('admin.manage_meetings') }}" title="Zamknij">
-        <i class="fa fa-times" aria-hidden="true"></i>
-        zamknij
-    </a>
     {% endif %}
 </main>
 {% endblock %}

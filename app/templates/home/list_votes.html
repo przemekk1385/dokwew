@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Przeglądaj dokumenty{% endblock %}
+{% block body %}
+<main>
+    {% if documents|length > 0 %}
+    <h3 class="mb-5 text-center">Lista uchwał</h3>
+    <table class="table">
+        <thead class="thead-light">
+            <tr>
+                <th scope="col">Numer posiedzenia</th>
+                <th scope="col">Numer uchwały</th>
+                <th scope="col">Treść uchwały</th>
+                <th scope="col">Pobierz</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for meeting_signature, votes in documents.items() %}
+            {% set outer_loop = loop %}
+            {% for vote in votes %}
+            <tr>
+                {% if not loop.index0 %}
+                <td rowspan="{{ votes|length }}">
+                    {{ meeting_signature }}
+                </td>
+                {% endif %}
+                <td class="text-center">
+                {{ vote.signature }}
+                </td>
+                <td>
+                {{ vote.description }}
+                </td>
+                <td class="text-center">
+                    <a href="{{ url_for('home.download_document', document_id=vote.id) }}" title="Pobierz {{ vote.filename }}"><i class="fa fa-download" aria-hidden="true"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+</main>
+{% endblock %}
+{% block scripts %}
+{% endblock %}

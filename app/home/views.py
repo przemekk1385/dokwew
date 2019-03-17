@@ -1,10 +1,11 @@
 from flask import (abort, current_app as app, flash, render_template,
-                   redirect, send_from_directory, url_for)
+                   redirect, request, send_from_directory, url_for)
 from flask_login import current_user, login_required
 
 from . import home
 from ..models import Document, Meeting, User
 
+import datetime
 import os
 
 
@@ -24,7 +25,7 @@ def admin_dashboard():
 @home.route('/dashboard')
 @login_required
 def dashboard():
-    return render_template('home/dashboard.html', title='Pulpit')
+    return render_template('home/index.html', title='Pulpit')
 
 
 @home.route('/documents/', defaults={'page': 1})
@@ -40,6 +41,26 @@ def list_documents(page):
     return render_template('home/list_documents.html',
                            documents=documents,
                            title='Lista dokumentów')
+
+
+@home.route('/votes', defaults={'page': 1})
+@home.route('/votes/<int:page>')
+def list_votes(page):
+    user = User.query.get_or_404(current_user.get_id())
+    meetings = user.meetings.all()
+    votes = {
+        signature: documents
+        for signature, documents
+        in {
+            meeting.signature: meeting.documents.filter_by(type_id=3).all()
+            for meeting in meetings
+        }.items() if documents
+    }
+    if not votes:
+        flash('Brak uchwał widocznych dla użytkownika %s.' %
+              user.username, 'info')
+    return render_template('home/list_votes.html',
+                           documents=votes)
 
 
 @home.route('/documents/download/<int:document_id>')
@@ -60,12 +81,24 @@ def download_document(document_id):  # todo: check user id before serving
 @login_required
 def list_meetings(page):
     user = User.query.get_or_404(current_user.get_id())
-    meetings = user.meetings.paginate(page,
-                                      app.config['ITEMS_PER_PAGE'])
+    year = request.args.get('year', default=0, type=int)
+    if year:
+        end = datetime.date(year=year, month=12, day=31)
+        start = datetime.date(year=year, month=1, day=1)
+        meetings = user.meetings\
+                       .filter(Meeting.date <= end)\
+                       .filter(Meeting.date >= start)\
+                       .paginate(page, app.config['ITEMS_PER_PAGE'])
+    else:
+        meetings = user.meetings.paginate(page,
+                                          app.config['ITEMS_PER_PAGE'])
+    years = list(set([
+        meeting.date.year for meeting in user.meetings.all()
+    ]))
     board = False
     management = False
     if meetings.total == 0:
-        flash('Brak wydarzeń widocznych dla użytkownika %s.' %
+        flash('Brak posiedzeń widocznych dla użytkownika %s.' %
               user.username, 'info')
     else:
         for meeting in meetings.items:
@@ -76,9 +109,11 @@ def list_meetings(page):
             management = True
     return render_template('home/list_meetings.html',
                            board=board,
+                           filters={'year': year, },
                            management=management,
                            meetings=meetings,
-                           title='Lista wydarzeń')
+                           title='Lista posiedzeń',
+                           years=years)
 
 
 @home.route('/meetings/details/<int:meeting_id>')
@@ -97,4 +132,4 @@ def meeting_details(meeting_id):
                            documents=documents,
                            management=management,
                            meeting=meeting,
-                           title='Szczegóły wydarzenia')
+                           title='Szczegóły posiedzenia')
